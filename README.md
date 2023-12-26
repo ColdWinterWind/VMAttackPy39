@@ -1,5 +1,6 @@
-# VMAttack **IDA** PRO Plugin
+# VMAttackPy39 **IDA** PRO Plugin
 **IDA Pro Plugin for static and dynamic virtualization-based packed analysis and deobfuscation.**
+**VMAttack, from which this is forked, has not seen any development in 7 years. This is my effort to re-factor the Python code to make it compatible with IDA Pro 7.5 and Python 3.9.**
 
 **VMAttack was awarded the _second place_ at the annual [IDA Pro Plug-in Contest in 2016](https://www.hex-rays.com/contests/2016/index.shtml)!**
 
