@@ -84,7 +84,7 @@ class CallbackExtension(action_handler_t):
                         ' [label=\"' + label + '\", style=filled, color=\"#' +
                         '{0:#x}'.format([0xddddff, 0xffdddd, 0xddffdd, 0xffddff, 0xffffdd, 0xddffff][node % 3])[2:] + '\"]\n')
             # check whether basic block has a ret instruction
-            if (lambda bb: True if 'ret_T' in map(lambda inst: inst.inst_type, bb) else False)(bb):
+            if (lambda bb: True if 'ret_T' in [inst.inst_type for inst in bb] else False)(bb):
                 continue
             jmp_addr = get_jmp_addr(bb)
             if jmp_addr == None:
@@ -122,7 +122,7 @@ class BBGraph(GraphViewer):
         self.func_addr = func_addr
         for inst in bb_lst:
             if isinstance(inst, Instruction):
-                print inst.__str__()
+                print(inst.__str__())
 
     def OnRefresh(self):
         self.Clear()
@@ -160,7 +160,7 @@ class BBGraph(GraphViewer):
         return True
 
     def CreateNode(self, start, end):
-        return ''.join('%s\n' % comment.rstrip('\t\n') for comment in filter(None, [Comment(addr) for addr in [ea for ea in xrange(start, end, 1)]]))
+        return ''.join('%s\n' % comment.rstrip('\t\n') for comment in [_f for _f in [Comment(addr) for addr in [ea for ea in range(start, end, 1)]] if _f])
 
 
 def show_graph(n, e, bb_lst, jmp_addrs, basic_blocks, func_addr):

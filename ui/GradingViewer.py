@@ -43,14 +43,14 @@ class GradingViewer(PluginViewer):
                     addr = QtGui.QStandardItem(' ')
                     disasm = QtGui.QStandardItem('previous CPU context:')
                     comment = QtGui.QStandardItem(' ')
-                    context = QtGui.QStandardItem(''.join('%s:%s ' % (c, prev.ctx[c]) for c in prev.ctx.keys() if prev.ctx is not None))
+                    context = QtGui.QStandardItem(''.join('%s:%s ' % (c, prev.ctx[c]) for c in list(prev.ctx.keys()) if prev.ctx is not None))
                     self.sim.appendRow([grade, tid, addr, disasm, comment, context])
                 grade = QtGui.QStandardItem('%s' % line.grade)
                 tid = QtGui.QStandardItem('%s' % line.thread_id)
                 addr = QtGui.QStandardItem('%x' % line.addr)
                 disasm = QtGui.QStandardItem(line.disasm_str())
                 comment = QtGui.QStandardItem(''.join(c for c in line.comment if line.comment is not None))
-                context = QtGui.QStandardItem(''.join('%s:%s ' % (c, line.ctx[c]) for c in line.ctx.keys() if line.ctx is not None))
+                context = QtGui.QStandardItem(''.join('%s:%s ' % (c, line.ctx[c]) for c in list(line.ctx.keys()) if line.ctx is not None))
 
                 self.sim.appendRow([grade, tid, addr, disasm, comment, context])
 

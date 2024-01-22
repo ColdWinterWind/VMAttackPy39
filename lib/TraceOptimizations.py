@@ -26,7 +26,7 @@ def optimization_peephole_folding(trace):
     addrs = {addr: addrs.count(addr) for addr in addrs}
     max_val = max(set(addrs.values()))
     # this method will work even if the handler consists of several basic blocks, as long as they have the same occurrence frequency in the trace
-    kill_index.extend([line for line in trace if line.addr in [addrs[key] for key in addrs.keys() if addrs[key] == max_val]])
+    kill_index.extend([line for line in trace if line.addr in [addrs[key] for key in list(addrs.keys()) if addrs[key] == max_val]])
 
     for line in trace:
         #start instruction based peephole

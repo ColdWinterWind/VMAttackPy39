@@ -1,7 +1,7 @@
 # coding=utf-8
 __author__ = 'Anatoli Kalysch'
 
-from UIManager import QtCore, QtWidgets
+from .UIManager import QtCore, QtWidgets
 
 class AboutWindow(QtWidgets.QDialog):
     def __init__(self, *args, **kwargs):
@@ -10,8 +10,8 @@ class AboutWindow(QtWidgets.QDialog):
         self.setWindowTitle("About ...")
         self.title = "VMAttack IDA PRO Plugin"
         self.subtitle = "IDA Pro Plugin for static and dynamic virtualization-obfuscation analysis and deobfuscation"
-        self.author = u"Anatoli Kalysch and Tobias Krauß"
-        self.thanks = u"Special thanks to Johannes Götzfried for conceptual help along the way!"
+        self.author = "Anatoli Kalysch and Tobias Krauß"
+        self.thanks = "Special thanks to Johannes Götzfried for conceptual help along the way!"
         self.version = "Version 0.2"
         self.address = "Friedrich-Alexander University Erlangen-Nuremberg\n i1 Software Security Research Group \n"
 
@@ -25,8 +25,8 @@ class AboutWindow(QtWidgets.QDialog):
             author.move(0, version.height() + version.y())
             thanks = self.config_label(self.thanks, 12)
             thanks.move(0, author.height() + author.y())
-        except Exception, e:
-            print e.message
+        except Exception as e:
+            print(e.message)
 
         self.show()
 

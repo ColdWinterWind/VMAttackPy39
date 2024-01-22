@@ -9,17 +9,17 @@ import idaapi
 from cute import QtGui, QtCore, QtWidgets, form_to_widget, use_qt5
 # import dependent version dependent UI elements
 if not use_qt5:
-    from legacyUI.ClusterViewer import ClusterViewer
-    from legacyUI.GradingViewer import GradingViewer
-    from legacyUI.OptimizationViewer import OptimizationViewer
-    from legacyUI.VMInputOutputViewer import VMInputOuputViewer
-    from legacyUI.StackChangeViewer import StackChangeViewer
+    from .legacyUI.ClusterViewer import ClusterViewer
+    from .legacyUI.GradingViewer import GradingViewer
+    from .legacyUI.OptimizationViewer import OptimizationViewer
+    from .legacyUI.VMInputOutputViewer import VMInputOuputViewer
+    from .legacyUI.StackChangeViewer import StackChangeViewer
 else:
-    from ClusterViewer import ClusterViewer
-    from GradingViewer import GradingViewer
-    from OptimizationViewer import OptimizationViewer
-    from VMInputOutputViewer import VMInputOuputViewer
-    from StackChangeViewer import StackChangeViewer
+    from .ClusterViewer import ClusterViewer
+    from .GradingViewer import GradingViewer
+    from .OptimizationViewer import OptimizationViewer
+    from .VMInputOutputViewer import VMInputOuputViewer
+    from .StackChangeViewer import StackChangeViewer
 
 
 class UIManager(object):
@@ -58,7 +58,7 @@ class UIManager(object):
 
     # remove all menus currently in dict
     def clear(self):
-        for menu in self.menu_dict.itervalues():
+        for menu in self.menu_dict.values():
             self.menu.removeAction(menu.menuAction())
         self.menu_dict = {}
 

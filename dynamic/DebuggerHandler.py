@@ -11,7 +11,7 @@ from collections import defaultdict
 from copy import deepcopy
 from lib.Util import remove_all_colors
 from ui.UIManager import QtGui
-from IDADebugger import IDADebugger
+from .IDADebugger import IDADebugger
 
 from idautils import *
 from idaapi import *
@@ -128,7 +128,7 @@ def load():
             # framework json trace
             if isinstance(lines, dict) or path.endswith('.json'):
                 get_log().log('[TRC] The trace seems to be a VMAttack trace\n')
-                for index in range(len(lines.keys())):
+                for index in range(len(list(lines.keys()))):
                     line = lines[str(index)]
                     t = Traceline(thread_id=line[0], addr=line[1], disasm=line[2], ctx=line[3], comment=line[4])
                     t.grade = line[5]
@@ -171,7 +171,7 @@ def load():
                     disasm = values[2].strip(' ').lower()
                     disasm = disasm.split('  ')
                     disasm = [x.lstrip() for x in disasm]
-                    disasm = filter(None, disasm)
+                    disasm = [_f for _f in disasm if _f]
                     if len(disasm) > 1 and disasm[1].__contains__(', '):
                         temp = disasm.pop(1)
                         for elem in temp.split(', '):
@@ -278,13 +278,13 @@ def load():
                     trace.append(Traceline(thread_id=thread_id, addr=addr, disasm=disasm, ctx=deepcopy(context)))
 
 
-            if 'rax' in trace[-1].ctx.keys():
+            if 'rax' in list(trace[-1].ctx.keys()):
                 trace.ctx_reg_size = 64
-            elif 'eax' in trace[-1].ctx.keys() and 'rax' not in trace[-1].ctx.keys():
+            elif 'eax' in list(trace[-1].ctx.keys()) and 'rax' not in list(trace[-1].ctx.keys()):
                 trace.ctx_reg_size = 32
             msg("[*] Trace Loaded!\n")
             return trace
-        except Exception, e:
+        except Exception as e:
             raise Exception('[*] Exception occured: \n%s\n' % (e.message))
     else:
         return None

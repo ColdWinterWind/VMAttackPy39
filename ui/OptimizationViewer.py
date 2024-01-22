@@ -25,7 +25,7 @@ class OptimizationViewer(PluginViewer):
         self.orig_trace = trace
         self.trace = deepcopy(trace)
         self.undo_stack = deque([deepcopy(trace), deepcopy(trace), deepcopy(trace)], maxlen=3)
-        self.opti_map = dict(zip(optimization_names, optimizations))
+        self.opti_map = dict(list(zip(optimization_names, optimizations)))
         self.order = []
         self.foldable_regs = []
         self.save = kwargs.get('save', None)
@@ -46,7 +46,7 @@ class OptimizationViewer(PluginViewer):
             addr = QtGui.QStandardItem('%x' % line.addr)
             disasm = QtGui.QStandardItem(line.disasm_str())
             comment = QtGui.QStandardItem(''.join(c for c in line.comment if line.comment is not None))
-            context = QtGui.QStandardItem(''.join('%s:%s ' % (c, line.ctx[c]) for c in line.ctx.keys() if line.ctx is not None))
+            context = QtGui.QStandardItem(''.join('%s:%s ' % (c, line.ctx[c]) for c in list(line.ctx.keys()) if line.ctx is not None))
 
             ctr += 1
             w.pbar_set(int(float(ctr) / float(max) * 100))

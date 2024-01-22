@@ -59,7 +59,7 @@ def to_vpush(p_lst, start_addr):
             if inst.is_mov():
                 wrote_values[inst.get_op_str(1)] = inst.get_op_str(2)
             continue
-        print inst
+        print(inst)
         if len(inst) != 1:
             if inst.op_is_mem(1):
                 if inst.is_rip_rel():
@@ -200,7 +200,7 @@ class VmInstruction(object):
             for inst in self.all_instructions:
                 mnem_str += str(inst)
             self.Pseudocode= PI.PseudoInstruction(mnem_str, inst_addr, [], 0, PI.UNDEF_T)
-            print 'Did not find pseudocode at addr: {0:#x}'.format(inst_addr)
+            print('Did not find pseudocode at addr: {0:#x}'.format(inst_addr))
 
 
     def __str__(self):

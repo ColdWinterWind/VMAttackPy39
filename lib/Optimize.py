@@ -55,7 +55,7 @@ def start_rec(pp_lst, jmp_pos):
     """
     jmp_inst = pp_lst[jmp_pos]
     if jmp_inst.list_len == 0:
-        print 'could not find jmp address'
+        print('could not find jmp address')
         return []
     jmp_op = jmp_inst.op_lst[0]
     pos_lst = rec_find_addr(pp_lst, jmp_pos, jmp_op, 20)
@@ -122,7 +122,7 @@ def get_jmp_addresses(pp_lst, code_eaddr):
     for jpos in jp_lst:
         poss_adr_pos += start_rec(pp_lst, jpos)
     if len(poss_adr_pos) == 0:
-        print 'could not find addresses'
+        print('could not find addresses')
         return []
     addrs = []
     for pos, jaddr in poss_adr_pos:

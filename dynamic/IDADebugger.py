@@ -5,7 +5,7 @@ from lib.VMRepresentation import get_vmr
 
 __author__ = 'Anatoli Kalysch'
 
-from Debugger import Debugger
+from .Debugger import Debugger
 from dynamic.TraceRepresentation import Trace, Traceline
 from idaapi import *
 from lib.Util import *
@@ -57,7 +57,7 @@ class IDADebugger(DBG_Hooks, Debugger):
 
 
         disasm = [x.lstrip() for x in disasm]
-        disasm = filter(None, disasm)
+        disasm = [_f for _f in disasm if _f]
         if len(disasm) > 1 and disasm[1].__contains__(', '):
             temp = disasm.pop(1)
             for elem in temp.split(', '):
@@ -89,7 +89,7 @@ class IDADebugger(DBG_Hooks, Debugger):
             self.arch = get_arch_dynamic()
 
         except Exception as ex:
-            print "An Exception was encountered: %s" % ex.message
+            print("An Exception was encountered: %s" % ex.message)
 
     def get_new_color(self, current_color):
         """
@@ -152,8 +152,8 @@ class IDADebugger(DBG_Hooks, Debugger):
         msg('[*] Trace generated!\n')
         if vmr.extract_param:
             vmr.func_args = self.func_args
-            for key in self.func_args.keys():
-                print 'Function %s call args:' % key, ''.join('%s, ' % arg for arg in self.func_args[key]).rstrip(', ')
+            for key in list(self.func_args.keys()):
+                print('Function %s call args:' % key, ''.join('%s, ' % arg for arg in self.func_args[key]).rstrip(', '))
         return self.trace
 
     def unhook_dbg(self):
@@ -173,7 +173,7 @@ class IDADebugger(DBG_Hooks, Debugger):
         pass
 
     def dbg_library_unload(self, pid, tid, ea, info):
-        print("Library unloaded: pid=%d tid=%d ea=0x%x info=%s" % (pid, tid, ea, info))
+        print(("Library unloaded: pid=%d tid=%d ea=0x%x info=%s" % (pid, tid, ea, info)))
         return 0
 
     def dbg_process_attach(self, pid, tid, ea, name, base, size):
@@ -185,7 +185,7 @@ class IDADebugger(DBG_Hooks, Debugger):
         return 0
 
     def dbg_library_load(self, pid, tid, ea, name, base, size):
-        print "Library loaded: pid=%d tid=%d name=%s base=%x" % (pid, tid, name, base)
+        print("Library loaded: pid=%d tid=%d name=%s base=%x" % (pid, tid, name, base))
 
 
     def dbg_bpt(self, tid, ea):
@@ -203,7 +203,7 @@ class IDADebugger(DBG_Hooks, Debugger):
         pass
 
     def dbg_exception(self, pid, tid, ea, exc_code, exc_can_cont, exc_ea, exc_info):
-        print("Exception: pid=%d tid=%d ea=0x%x exc_code=0x%x can_continue=%d exc_ea=0x%x exc_info=%s" % (pid, tid, ea, exc_code & BADADDR, exc_can_cont, exc_ea, exc_info))
+        print(("Exception: pid=%d tid=%d ea=0x%x exc_code=0x%x can_continue=%d exc_ea=0x%x exc_info=%s" % (pid, tid, ea, exc_code & BADADDR, exc_can_cont, exc_ea, exc_info)))
         # return values:
         #   -1 - to display an exception warning dialog
         #        if the process is suspended.
@@ -257,8 +257,8 @@ class IDADebugger(DBG_Hooks, Debugger):
                             'df': self.convert(cpu.df)})
 
             self.trace.append(Traceline(thread_id=tid, addr=ea, disasm=self.disconv(GetDisasm(ea)), ctx=deepcopy(self.ctx)))
-        except Exception, e:
-            print e.message
+        except Exception as e:
+            print(e.message)
         # return values:
         #   1  - do not log this trace event;
         #   0  - log it

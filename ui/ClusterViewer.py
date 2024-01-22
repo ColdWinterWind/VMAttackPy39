@@ -79,7 +79,7 @@ class ClusterViewer(PluginViewer):
                         bb_node = QtGui.QStandardItem(
                             'BB%s Summary %x-%x: %s\t%s\t%s' % (bbs.index(bb), bb[0].addr, bb[-1].addr,
                                                                 ''.join('%s ; ' % (''.join('%s, ' % c for c in line)) for line in bb_sum.disasm),
-                                                                ''.join('%s, ' % c for c in filter(None, bb_sum.comment) if bb_sum.comment is not None),
+                                                                ''.join('%s, ' % c for c in [_f for _f in bb_sum.comment if _f] if bb_sum.comment is not None),
                                                                 ''.join('%s:%s ' % (c, bb_sum.ctx[c]) for c in bb_sum.ctx if bb_sum.ctx is not None)))
                         for line in bb:
                             tid = QtGui.QStandardItem('%s' % line.thread_id)
@@ -159,7 +159,7 @@ class ClusterViewer(PluginViewer):
 
         # fetch the clicked string
         s = index.data(0)
-        print s
+        print(s)
         line_index = []
         inner_cluster_index = []
         if s.startswith('Cluster'):
@@ -177,7 +177,7 @@ class ClusterViewer(PluginViewer):
         elif s.startswith('BB'):
             addrs = re.findall(r'BB.*Summary (.*-.*): .*', s)[0]
             addrs = addrs.split('-')
-            bad_range = range(int(addrs[0], 16), int(addrs[1], 16))
+            bad_range = list(range(int(addrs[0], 16), int(addrs[1], 16)))
             for line in self.trace:
                 if isinstance(line, Traceline):
                     continue
@@ -231,7 +231,7 @@ class ClusterViewer(PluginViewer):
             menu.addAction(action_remove)
             menu.addSeparator()
         except:
-            print '[*] An Exception occured, remove action could not be added to the menu!'
+            print('[*] An Exception occured, remove action could not be added to the menu!')
         # Actions
         action_remove_threshold = QtWidgets.QAction('Remove several clusters...', self.treeView)
         action_remove_threshold.triggered.connect(self.ClusterRemoval)

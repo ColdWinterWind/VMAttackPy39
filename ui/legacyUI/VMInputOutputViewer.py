@@ -29,7 +29,7 @@ class VMInputOuputViewer(PluginViewer):
 
     def PopulateModel(self):
         assert isinstance(self.ctx, dict)
-        for key in self.ctx.keys():
+        for key in list(self.ctx.keys()):
             if get_reg_class(key) is not None:
                 node = QtGui.QStandardItem('Register %s' % key)
                 node_brush = set()
@@ -39,7 +39,7 @@ class VMInputOuputViewer(PluginViewer):
                     addr = QtGui.QStandardItem('%x' % line.addr)
                     disasm = QtGui.QStandardItem(line.disasm_str())
                     comment = QtGui.QStandardItem(''.join(c for c in line.comment if line.comment is not None))
-                    context = QtGui.QStandardItem(''.join('%s:%s ' % (c, line.ctx[c]) for c in line.ctx.keys() if line.ctx is not None))
+                    context = QtGui.QStandardItem(''.join('%s:%s ' % (c, line.ctx[c]) for c in list(line.ctx.keys()) if line.ctx is not None))
                     ci = 0
                     co = 0
                     for selector in self.selection['upper']:  # check input values

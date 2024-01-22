@@ -104,7 +104,7 @@ class Traceline(object):
                                          self.addr,
                                          self.disasm_str(),
                                          ''.join(c for c in self.comment if self.comment is not None),
-                                         ''.join('%s:%s ' % (c, self.ctx[c]) for c in self.ctx.keys() if isinstance(self.ctx, dict)))
+                                         ''.join('%s:%s ' % (c, self.ctx[c]) for c in list(self.ctx.keys()) if isinstance(self.ctx, dict)))
     @property
     def is_mov(self):
         return self._line[2][0].__contains__('mov')

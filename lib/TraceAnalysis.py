@@ -5,7 +5,7 @@ import operator
 from _collections import defaultdict
 from copy import deepcopy
 
-from TraceOptimizations import *
+from .TraceOptimizations import *
 from dynamic.TraceRepresentation import Trace, Traceline
 from idaapi import *
 from idautils import *
@@ -21,16 +21,16 @@ def visualize_cli(cluster):
     Visualize the cluster on the console or IDA Output window
     :param cluster: clustered trace or trace
     """
-    print
-    print
+    print()
+    print()
     for line in range(len(cluster)):
         if isinstance(cluster[line], Traceline):
-            print '- single:' + cluster[line].to_str_line()
+            print('- single:' + cluster[line].to_str_line())
         elif isinstance(cluster[line], list):
-            print
-            print "+ cluster %s - %s:" % (hex(cluster[line][0].addr), hex(cluster[line][-1].addr))
+            print()
+            print("+ cluster %s - %s:" % (hex(cluster[line][0].addr), hex(cluster[line][-1].addr)))
             for num in range(len(cluster[line])):
-                print '   ' + cluster[line][num].to_str_line()
+                print('   ' + cluster[line][num].to_str_line())
 
 
 # #######################################
@@ -76,10 +76,10 @@ def address_count(trace):
     for addr in trace:
         # for heuristic analysis the count of address
         count = trace.count(addr)
-        if addr not in analysis_result.keys():
+        if addr not in list(analysis_result.keys()):
             analysis_result[addr] = count
     # sort the analysis result by most common addresses
-    sorted_result = sorted(analysis_result.items(), key=operator.itemgetter(1))
+    sorted_result = sorted(list(analysis_result.items()), key=operator.itemgetter(1))
     sorted_result.reverse()
     return sorted_result
 
@@ -125,8 +125,8 @@ def repetition_cluster_round(cluster_list):
                                 cluster_list[ind - pop_ctr].append(addition)
                             elif isinstance(addition, list):
                                 cluster_list[ind - pop_ctr].extend(addition)
-            except Exception, e:
-                print e.message
+            except Exception as e:
+                print(e.message)
                 pass
 
     # clean up clusterlist
@@ -153,8 +153,8 @@ def create_bb_diff(bb, ctx_reg_size, prev_line_ctx):
     """
     first = bb[0]
     last = bb[-1]
-    keys_f = prev_line_ctx.keys()
-    keys_l = last.ctx.keys()
+    keys_f = list(prev_line_ctx.keys())
+    keys_l = list(last.ctx.keys())
     context = {}
     disasm = []
     comment = []
@@ -214,16 +214,16 @@ def extract_stack_change(line, stack_changes):
     :param stack_changes: the stack_changes dict
     :return: updated stack_changes
     """
-    for comment in filter(None, line.comment):
+    for comment in [_f for _f in line.comment if _f]:
         try:
             addr, value = ''.join(c for c in comment if c not in '[]').split('=')
             if stack_changes[addr] != 0 and not stack_changes[addr].endswith(value):
                 stack_changes[addr] = stack_changes[addr] + '->' + value
             else:
                 stack_changes[addr] = value
-        except Exception, e:
-            print e.message
-            print e.args
+        except Exception as e:
+            print(e.message)
+            print(e.args)
 
     return line, stack_changes
 
@@ -409,8 +409,8 @@ def dynamic_vm_values(trace, code_start=BADADDR, code_end=BADADDR, silent=False)
                         arg = re.findall(r'.*_([0123456789ABCDEFabcdef]*)', l.disasm[1])
                         if len(arg) == 1:
                             code_addrs.append(int(arg[0], 16))
-                    except Exception, e:
-                        print e.message
+                    except Exception as e:
+                        print(e.message)
 
     # finalize base_addr
     max_addr = int(max(base_addr, key=base_addr.get), 16)  # now we have the base_addr used for offset computation - this will probably be the top of the table but to be sure we need to take its relative position into account
@@ -437,7 +437,7 @@ def dynamic_vm_values(trace, code_start=BADADDR, code_end=BADADDR, silent=False)
     vm_ctx.base_addr = base_addr
     vm_ctx.vm_addr = vm_addr
 
-    print code_start, code_end, base_addr, vm_addr
+    print(code_start, code_end, base_addr, vm_addr)
 
     return vm_ctx
 
@@ -474,7 +474,7 @@ def find_virtual_regs(trace, manual=False, update=None):
 
     vmr.vm_stack_reg_mapping = virt_regs
     if manual:
-        print ''.join('%s:%s\n' % (c, virt_regs[c]) for c in virt_regs.keys())
+        print(''.join('%s:%s\n' % (c, virt_regs[c]) for c in list(virt_regs.keys())))
     return virt_regs
 
 
@@ -576,7 +576,7 @@ def find_input(trace, manual=False, update=None):
     if update is not None:
         update.pbar_update(10)
     if manual:
-        print 'operands: %s' % ''.join('%s | ' % op for op in ops)
+        print('operands: %s' % ''.join('%s | ' % op for op in ops))
     return ops
 
 def find_output(trace, manual=False, update=None):
@@ -607,7 +607,7 @@ def find_output(trace, manual=False, update=None):
     if update is not None:
         update.pbar_update(40)
     if manual:
-        print ''.join('%s:%s\n' % (c, ctx[c]) for c in ctx.keys() if get_reg_class(c) is not None)
+        print(''.join('%s:%s\n' % (c, ctx[c]) for c in list(ctx.keys()) if get_reg_class(c) is not None))
     return set([ctx[get_reg(reg, trace.ctx_reg_size)].upper() for reg in ctx if get_reg_class(reg) is not None])
 
 
@@ -671,7 +671,7 @@ def follow_virt_reg(trace, **kwargs):
             # +1 because trace is reversed to get to prev element
             prev = trace[trace.index(line)+1]
             for val in reg_vals.copy():
-                if val in line.ctx.values() and val not in prev.ctx.values():
+                if val in list(line.ctx.values()) and val not in list(prev.ctx.values()):
                     backtrace.append(line)
                     # if val suddenly appears in the ctx there should be 2 possibilities:
                     # 1. it was moved from mem, so it was on the stack -> append stack addres to be watched out for
@@ -709,7 +709,7 @@ def follow_virt_reg(trace, **kwargs):
                                         pass
 
 
-        except Exception, e:
+        except Exception as e:
             pass
             #print 'reg_vals\n',line, e.message
         if watch_addrs:
@@ -719,7 +719,7 @@ def follow_virt_reg(trace, **kwargs):
                         backtrace.append(line)
 
                         reg_vals.add(line.disasm[2])
-                        r = line.ctx.keys()[line.ctx.values().index(line.disasm[2])]
+                        r = list(line.ctx.keys())[list(line.ctx.values()).index(line.disasm[2])]
                         for i in range(len(trace)):
                             temp = trace[trace.index(line)+i]
                             if len(temp.disasm) == 3:
@@ -730,7 +730,7 @@ def follow_virt_reg(trace, **kwargs):
 
                         if line.is_mov:
                             watch_addrs.remove(addr)
-                except Exception, e:
+                except Exception as e:
                     #print 'watch_addr\n',line, e.message
                     pass
 
@@ -745,8 +745,8 @@ def follow_virt_reg(trace, **kwargs):
     except:
         pass
     if manual:
-        print
+        print()
         for line in backtrace:
-            print line.to_str_line()
+            print(line.to_str_line())
 
     return backtrace

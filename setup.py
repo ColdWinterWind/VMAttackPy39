@@ -11,14 +11,14 @@ def do(action, dependency):
     return pip.main([action, dependency])
 
 def usage():
-    print "Usage: python setup.py <install | uninstall>"
+    print("Usage: python setup.py <install | uninstall>")
 
 
 dependencies = ["distorm3", 'idacute']
 
 
 if __name__ == '__main__':
-    print '[*] Starting dependency handling!'
+    print('[*] Starting dependency handling!')
     stub_name = 'VMAttack_plugin_stub.py'
     for dependency in dependencies:
         try:
@@ -29,7 +29,7 @@ if __name__ == '__main__':
             if retval == 0:
                 continue
             else:
-                print '[!] An error occured! Please resolve issues with dependencies and try again.'
+                print('[!] An error occured! Please resolve issues with dependencies and try again.')
 
         except IndexError:
             usage()
@@ -45,18 +45,18 @@ if __name__ == '__main__':
     except:
         pass
 
-    print '[*] Setting up environment and installing Plugin.'
+    print('[*] Setting up environment and installing Plugin.')
     # set up environment variable on Windows: setx Framework C:\path\to\Framework\
     plugin_dir = getcwd()
     system('setx VMAttack %s' % plugin_dir)
     # copy stub into the IDA PRO Plugin directory
-    ida_dir = raw_input('Please input full path to the IDA *plugin* folder (e.g. X:\IDA\plugins\): ')
+    ida_dir = input('Please input full path to the IDA *plugin* folder (e.g. X:\IDA\plugins\): ')
     if not ida_dir.endswith(r'\\'):
         ida_dir += r'\\'
     with open('install_dir', 'w') as f:
         f.write(ida_dir)
     copyfile(stub_name, ida_dir+stub_name)
-    print '[*] Install complete. All Done!'
+    print('[*] Install complete. All Done!')
 
 
 

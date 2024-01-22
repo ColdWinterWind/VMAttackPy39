@@ -134,7 +134,7 @@ def first_deobfuscate(ea, base, endaddr):
         vc = Byte(curraddr)
         instr_lst = get_instruction_list(vc, base)
         if len(instr_lst) < 1:
-            print 'error occured'
+            print('error occured')
             curraddr += 1
             continue
         has_catch = False
@@ -271,7 +271,7 @@ def read_in_comments(start, end):
             ret.append((comment, addr))
             addr += 1
         elif r_comment != None and comment == None:
-            print 'r_comment'
+            print('r_comment')
             ret.append((r_comment, addr))
             addr += 1
         else:
@@ -300,7 +300,7 @@ def find_start(start, end):
             erg = addr
         addr += 1
     if counter != 1:
-        print 'could not resolve start_addr'
+        print('could not resolve start_addr')
         return BADADDR
     else:
         return erg
@@ -339,7 +339,7 @@ def get_jaddr_from_comments(pp_lst, comment_lst):
             jmps = jmps[index:len(jmps)]
             str_lst = jmps.split(', ')
             for sub_str in str_lst:
-                ret.append((long(sub_str, 16), caddr))
+                ret.append((int(sub_str, 16), caddr))
         else:
             continue
     return ret
@@ -408,7 +408,7 @@ def has_ret(bb):
     @param bb List of PseudoInstructions of one basic block
     @return True if ret instruction is part of basic block, False otherwise
     """
-    return (lambda bb: True if 'ret_T' in map(lambda inst: inst.inst_type, bb) else False)(bb)
+    return (lambda bb: True if 'ret_T' in [inst.inst_type for inst in bb] else False)(bb)
 
 def get_jmp_loc(jmp_addr, jmp_addrs):
     """
@@ -503,8 +503,8 @@ def deobfuscate(code_saddr,  base_addr, code_eaddr, vm_addr, display=4, real_sta
                             edges.append(('bb%d' % (node), 'bb%d' % (pos)))
         try:
             g = show_graph(nodes, edges, opt_basic, jmp_addrs, basic_blocks, real_start)
-        except Exception, e:
-            print e.message
+        except Exception as e:
+            print(e.message)
     if jmp_addrs != []:
         min_jmp = min(jmp_addrs)[0]
     else:
@@ -602,10 +602,10 @@ def print_bb(bb_lsts):
     """
     block_count = 1
     for lst in bb_lsts:
-        print 'Start BB', block_count
+        print('Start BB', block_count)
         for inst in lst:
-            print str(inst)[:len(str(inst)) - 1]
-        print 'End BB', block_count
+            print(str(inst)[:len(str(inst)) - 1])
+        print('End BB', block_count)
         block_count += 1
 
 
@@ -618,26 +618,26 @@ def get_distorm_info(inst_addr):
     inst_bytes = GetManyBytes(inst_addr, size)
     inst = distorm3.Decompose(inst_addr,
                               inst_bytes, distorm3.Decode64Bits, 0)
-    print inst[0]
+    print(inst[0])
     i = inst[0]
-    print 'InstBytes ', i.instructionBytes
-    print 'Opcode ', i.opcode
+    print('InstBytes ', i.instructionBytes)
+    print('Opcode ', i.opcode)
     for o in i.operands:
-        print 'operand ', o
-        print 'operand type', o.type
+        print('operand ', o)
+        print('operand type', o.type)
     for f in i.flags:
-        print 'flag ', f
-        print 'raw_flags ', i.rawFlags
-    print 'inst_class ', i.instructionClass
-    print 'flow_control ', i.flowControl
-    print 'address ', i.address
-    print 'size ', i.size
-    print 'dt ', i.dt
-    print 'valid ', i.valid
-    print 'segment ', i.segment
-    print 'unused_Prefixes ', i.unusedPrefixesMask
-    print 'mnemonic ', i.mnemonic
-    print 'inst_class ', i.instructionClass
+        print('flag ', f)
+        print('raw_flags ', i.rawFlags)
+    print('inst_class ', i.instructionClass)
+    print('flow_control ', i.flowControl)
+    print('address ', i.address)
+    print('size ', i.size)
+    print('dt ', i.dt)
+    print('valid ', i.valid)
+    print('segment ', i.segment)
+    print('unused_Prefixes ', i.unusedPrefixesMask)
+    print('mnemonic ', i.mnemonic)
+    print('inst_class ', i.instructionClass)
 
 
 def jmp_to_orig(address, base):
@@ -713,9 +713,9 @@ def static_vmctx(manual=False):
             try:
                 base_addr = int(re.findall(r'.*off_([0123456789abcdefABCDEF]*)\[.*\]', GetOpnd(base_addr, 0))[0], 16)
                 break
-            except Exception, e:
-                print e.message
-                print e.args
+            except Exception as e:
+                print(e.message)
+                print(e.args)
         else:
             base_addr = NextHead(base_addr)
     if base_addr > vm_seg_end:
@@ -736,7 +736,7 @@ def static_vmctx(manual=False):
     vmr.vm_ctx = vm_ctx
 
     if manual:
-        print 'Code Start: %x; Code End: %x; Base Addr: %x; VM Addr: %x' % (code_start, code_end, base_addr, vm_addr)
+        print('Code Start: %x; Code End: %x; Base Addr: %x; VM Addr: %x' % (code_start, code_end, base_addr, vm_addr))
 
 def static_deobfuscate(display=0, userchoice=False):
     """
@@ -749,9 +749,9 @@ def static_deobfuscate(display=0, userchoice=False):
         try:
             vm_ctx = static_vmctx()
             vmr.vm_ctx = vm_ctx
-        except Exception, e:
-            print e.message
-            print e.args
+        except Exception as e:
+            print(e.message)
+            print(e.args)
     if userchoice:
         code_start = AskAddr(vmr.code_start, 'Choose start of byte code:')
         code_end = AskAddr(vmr.code_end, 'Choose end of byte code:')

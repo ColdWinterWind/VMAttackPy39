@@ -9,7 +9,7 @@ from ui.UIManager import OptimizationViewer
 from ui.UIManager import StackChangeViewer
 from ui.UIManager import VMInputOuputViewer
 
-from DebuggerHandler import load, save, get_dh
+from .DebuggerHandler import load, save, get_dh
 from lib.TraceAnalysis import *
 from lib.VMRepresentation import get_vmr
 from ui.NotifyProgress import NotifyProgress
@@ -19,29 +19,29 @@ from ui.UIManager import ClusterViewer
 ### DEBUGGER LOADING STRATEGIES ###
 # IDA Debugger
 def load_idadbg(self):
-    from IDADebugger import IDADebugger
+    from .IDADebugger import IDADebugger
     return IDADebugger()
 
 # OllyDbg
 def load_olly(self):
-    from OllyDebugger import OllyDebugger
+    from .OllyDebugger import OllyDebugger
     return OllyDebugger()
 
 # Bochs Dbg
 def load_bochsdbg(self):
-    from IDADebugger import IDADebugger
+    from .IDADebugger import IDADebugger
     LoadDebugger('Bochs', 0)
     return IDADebugger()
 
 # Win32 Dbg
 def load_win32dbg(self):
-    from IDADebugger import IDADebugger
+    from .IDADebugger import IDADebugger
     LoadDebugger('win32', 0)
     return IDADebugger()
 
 # Immunity Dbg
 def load_immunitydbg(self):
-    from IDADebugger import IDADebugger
+    from .IDADebugger import IDADebugger
     return IDADebugger()
 
 
@@ -125,9 +125,9 @@ def address_heuristic():
         w.close()
 
         for addr, count in ac:
-            print 'Address %x (Disasm: %s) was encountered %s times.' % (addr, GetDisasm(addr), count)
+            print('Address %x (Disasm: %s) was encountered %s times.' % (addr, GetDisasm(addr), count))
     except:
-        print '[*] An exception occurred! Quitting! '
+        print('[*] An exception occurred! Quitting! ')
         w.close()
 
 # analysis functions supporting manual flag
@@ -180,7 +180,7 @@ def input_output_analysis(manual=False):
             w.pbar_update(20)
             vr = vr.get_result()
             # create the trace excerpt for every relevant reg
-            for key in vr.keys():
+            for key in list(vr.keys()):
                 if get_reg_class(key) is not None:
                     ctx[key] = follow_virt_reg(deepcopy(trace), virt_reg_addr=vr[key], real_reg_name=key)
             vmr.vm_stack_reg_mapping = ctx
@@ -267,7 +267,7 @@ def dynamic_vmctx(manual=False):
     vmr = get_vmr()
     vmr.vm_ctx = vm_ctx
     if manual:
-        print 'Code Start: %x; Code End: %x; Base Addr: %x; VM Addr: %x' % (vm_ctx.code_start, vm_ctx.code_end, vm_ctx.base_addr, vm_ctx.vm_addr)
+        print('Code Start: %x; Code End: %x; Base Addr: %x; VM Addr: %x' % (vm_ctx.code_start, vm_ctx.code_end, vm_ctx.base_addr, vm_ctx.vm_addr))
 
 def init_grading(trace):
     """
@@ -321,7 +321,7 @@ def grading_automaton(visualization=0):
                     reg_dict[get_reg_class(line.disasm[2])] += 1
 
             # get the sorted list of regs highest occurence first
-            sorted_keys = sorted(reg_dict.items(), key=operator.itemgetter(1), reverse=True)  # sorted_list = list of (reg_name, frequency)
+            sorted_keys = sorted(list(reg_dict.items()), key=operator.itemgetter(1), reverse=True)  # sorted_list = list of (reg_name, frequency)
             length = len(sorted_keys)
             w.pbar_update(10) # 20%
             # classify the important and less important registers
@@ -370,7 +370,7 @@ def grading_automaton(visualization=0):
                                 if line == other:
                                     other.raise_grade(vmr.in_out)
                         except ValueError:
-                            print 'The line %s was not found in the trace, hence the grade could not be raised properly!' % line.to_str_line()
+                            print('The line %s was not found in the trace, hence the grade could not be raised properly!' % line.to_str_line())
                 elif get_reg_class(key) in disregard_regs:
                     for line in follow_virt_reg(deepcopy(trace), virt_reg_addr=virt_regs[key]):
                         try:
@@ -378,7 +378,7 @@ def grading_automaton(visualization=0):
                                 if line == other:
                                     other.lower_grade(vmr.in_out)
                         except ValueError:
-                            print 'The line %s was not found in the trace, hence the grade could not be lowered properly!' % line.to_str_line()
+                            print('The line %s was not found in the trace, hence the grade could not be lowered properly!' % line.to_str_line())
         except:
             pass
         w.pbar_update(5) #45%
@@ -392,7 +392,7 @@ def grading_automaton(visualization=0):
                     reg_dict[get_reg_class(line.disasm[1])] += 1
 
             # get the sorted list of regs highest occurrence first
-            sorted_keys = sorted(reg_dict.items(), key=operator.itemgetter(1), reverse=True)  # sorted_list = list of (reg_name, frequency)
+            sorted_keys = sorted(list(reg_dict.items()), key=operator.itemgetter(1), reverse=True)  # sorted_list = list of (reg_name, frequency)
             length = len(sorted_keys)
             w.pbar_update(5) #50%
             # classify the less important registers
@@ -465,7 +465,7 @@ def grading_automaton(visualization=0):
         # TODO atm this is a little workaround to include the static analysis results
         try:
             comments = set(v_inst.split(' ')[0] for v_inst in [Comment(ea) for ea in range(vmr.code_start, vmr.code_end)] if v_inst is not None)
-            print comments
+            print(comments)
             ins = [c.lstrip('v').split('_')[0] for c in comments]
             for line in trace:
                 if line.disasm[0] in ins:
@@ -508,8 +508,8 @@ def grading_automaton(visualization=0):
             if threshold > -1:
                 for line in trace:
                     if line.grade >= threshold:
-                        print line.grade, line.to_str_line()
+                        print(line.grade, line.to_str_line())
 
-    except Exception, e:
+    except Exception as e:
         w.close()
         msg(e.message + '\n')

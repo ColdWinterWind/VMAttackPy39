@@ -23,8 +23,8 @@ class StackChangeViewer(PluginViewer):
             sa = QtGui.QStandardItem('%s' % key)
             chg = QtGui.QStandardItem('%s' % self.stack_changes[key])
 
-            if key in self.vr.values():
-                reg = QtGui.QStandardItem('%s' % [k for k in self.vr.keys() if self.vr[k] == key][0])
+            if key in list(self.vr.values()):
+                reg = QtGui.QStandardItem('%s' % [k for k in list(self.vr.keys()) if self.vr[k] == key][0])
             else:
                 reg = QtGui.QStandardItem(' ')
             self.sim.appendRow([sa, reg, chg])
